@@ -1,0 +1,165 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String      @id @default(cuid())
+  name         String
+  email        String      @unique
+  passwordHash String
+  role         String      @default("WAITER") // "ADMIN" | "WAITER" | "KITCHEN"
+  pin          String?     // Hashed PIN
+  isActive     Boolean     @default(true)
+  orders       Order[]     @relation("WaiterOrders")
+  bills        Bill[]      @relation("CashierBills")
+  voidedItems  OrderItem[] @relation("VoidAuthorizer")
+  voidLogs     VoidLog[]   @relation("ManagerVoidLogs")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Section {
+  id        String            @id @default(cuid())
+  name      String            @unique
+  sortOrder Int               @default(0)
+  tables    RestaurantTable[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model RestaurantTable {
+  id                String      @id @default(cuid())
+  tableNumber       String      @unique
+  sectionId         String
+  section           Section     @relation(fields: [sectionId], references: [id])
+  capacity          Int         @default(4)
+  status            String      @default("AVAILABLE") // "AVAILABLE" | "OCCUPIED" | "BILL_REQUESTED" | "CLEANING"
+  activeOrderId     String?     @unique
+  mergedIntoTableId String?
+  posX              Int         @default(0)
+  posY              Int         @default(0)
+  orders            Order[]
+  bills             Bill[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  items     MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  isAvailable Boolean     @default(true)
+  isVeg       Boolean     @default(true)
+  taxRate     Float       @default(5.0) // 5% GST
+  imageUrl    String?
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id            String          @id @default(cuid())
+  orderNumber   String          @unique // e.g. ORD-20261114-001
+  tableId       String?
+  table         RestaurantTable? @relation(fields: [tableId], references: [id])
+  waiterId      String
+  waiter        User            @relation("WaiterOrders", fields: [waiterId], references: [id])
+  status        String          @default("ACTIVE") // "ACTIVE" | "COMPLETED" | "CANCELLED"
+  orderType     String          @default("DINE_IN") // "DINE_IN" | "TAKEAWAY"
+  subtotal      Float           @default(0.0)
+  taxTotal      Float           @default(0.0)
+  discountTotal Float           @default(0.0)
+  grandTotal    Float           @default(0.0)
+  notes         String?
+  items         OrderItem[]
+  bills         Bill[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model OrderItem {
+  id          String      @id @default(cuid())
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId  String
+  menuItem    MenuItem    @relation(fields: [menuItemId], references: [id])
+  quantity    Int         @default(1)
+  unitPrice   Float
+  notes       String?
+  roundNumber Int         @default(1) // 1 = initial order, 2+ = add-on
+  isAddon     Boolean     @default(false)
+  status      String      @default("PENDING") // "PENDING" | "PREPARING" | "READY_TO_SERVE" | "SERVED" | "VOIDED"
+  voidReason  String?
+  voidedById  String?
+  voidedBy    User?       @relation("VoidAuthorizer", fields: [voidedById], references: [id])
+  voidedAt    DateTime?
+  voidLogs    VoidLog[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Bill {
+  id             String          @id @default(cuid())
+  billNumber     String          @unique // e.g. INV-20261114-001
+  orderId        String
+  order          Order           @relation(fields: [orderId], references: [id])
+  tableId        String?
+  table          RestaurantTable? @relation(fields: [tableId], references: [id])
+  cashierId      String
+  cashier        User            @relation("CashierBills", fields: [cashierId], references: [id])
+  subtotal       Float
+  discountType   String          @default("NONE") // "NONE" | "FLAT" | "PERCENTAGE"
+  discountValue  Float           @default(0.0)
+  discountAmount Float           @default(0.0)
+  discountReason String?
+  cgstAmount     Float           @default(0.0)
+  sgstAmount     Float           @default(0.0)
+  serviceCharge  Float           @default(0.0)
+  roundOff       Float           @default(0.0)
+  grandTotal     Float
+  paymentStatus  String          @default("PENDING") // "PENDING" | "PAID" | "REFUNDED"
+  payments       Payment[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  billId          String
+  bill            Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  paymentMode     String   // "CASH" | "UPI" | "CARD"
+  amount          Float
+  referenceNumber String?
+  cashTendered    Float?
+  changeAmount    Float?
+  createdAt       DateTime @default(now())
+}
+
+model VoidLog {
+  id             String    @id @default(cuid())
+  orderItemId    String
+  orderItem      OrderItem @relation(fields: [orderItemId], references: [id])
+  authorizedById String
+  authorizedBy   User      @relation("ManagerVoidLogs", fields: [authorizedById], references: [id])
+  reason         String
+  voidedAt       DateTime  @default(now())
+}
