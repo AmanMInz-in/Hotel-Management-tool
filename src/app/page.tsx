@@ -8,68 +8,71 @@ import { UserNav } from "@/components/shared/UserNav";
 export default function HomePage() {
   const terminals = [
     {
-      title: "Waiter POS Terminal",
+      title: "Floor Server POS",
       subtitle: "Front-of-House Operations",
-      description: "Interactive table grid, instant order taking, add-on rounds, and bill settlement.",
+      description: "Interactive table grid, instant order firing, add-on rounds, and bill settlement.",
       href: "/pos",
       icon: UtensilsCrossed,
-      color: "from-blue-600 to-indigo-600",
-      accent: "border-blue-500/40 hover:border-blue-500",
-      badge: "Touch Handheld / Tablet",
+      badge: "Touch Tablet / Handheld",
     },
     {
       title: "Kitchen Display (KDS)",
       subtitle: "Back-of-House Queue",
-      description: "Real-time FIFO order queue, aging timers, add-on alerts, and ready notifications.",
+      description: "Real-time FIFO queue, aging timers, add-on alerts, and live bump notifications.",
       href: "/kds",
       icon: ChefHat,
-      color: "from-orange-600 to-amber-600",
-      accent: "border-orange-500/40 hover:border-orange-500",
       badge: "Kitchen Touch Monitor",
     },
     {
-      title: "Admin Dashboard",
+      title: "Manager Console",
       subtitle: "Management & Control",
-      description: "Dynamic tables, live menu & 86'd management, sales analytics, and void audit logs.",
+      description: "Floor tables, live 86'd inventory, collections (Day/Week/Month), and CSV audit export.",
       href: "/admin",
       icon: ShieldCheck,
-      color: "from-purple-600 to-violet-600",
-      accent: "border-purple-500/40 hover:border-purple-500",
       badge: "Manager Portal",
     },
   ];
 
   return (
-    <main className="min-h-screen bg-background flex flex-col justify-between p-6 sm:p-12">
-      {/* Top Header with User Status / Login Link */}
-      <header className="flex items-center justify-between max-w-5xl mx-auto w-full pb-6 border-b border-slate-900">
+    <main
+      className="relative min-h-screen flex flex-col justify-between p-6 sm:p-12 overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed"
+      style={{ backgroundImage: "url('/assets/bg.jpg')" }}
+    >
+      {/* Semi-transparent dark overlay to enhance restaurant ambiance and card legibility */}
+      <div className="absolute inset-0 bg-black/55 backdrop-blur-[1px] pointer-events-none z-0" />
+
+      {/* Top Header */}
+      <header className="flex items-center justify-between max-w-5xl mx-auto w-full pb-6 border-b border-white/15 relative z-10">
         <div className="flex items-center space-x-2">
-          <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-bold text-slate-400">Grand Bistro POS Online</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-xs font-bold text-slate-100 uppercase tracking-wider drop-shadow">
+            Grand Bistro POS Online
+          </span>
         </div>
         <div className="flex items-center space-x-3">
           <UserNav />
           <Link
             href="/login"
-            className="flex items-center space-x-2 px-3.5 py-1.5 rounded-xl bg-blue-600/20 border border-blue-500/40 text-blue-400 hover:text-white hover:bg-blue-600 text-xs font-bold transition-all"
+            className="flex items-center space-x-2 px-3.5 py-2 rounded-xl bg-[#181B20]/90 backdrop-blur-md border border-[#262A33] hover:border-amber-500/50 text-slate-200 hover:text-amber-400 text-xs font-bold transition-all min-h-[40px] shadow-lg"
           >
-            <LogIn className="w-4 h-4" />
-            <span>Terminal Login / Switch</span>
+            <LogIn className="w-4 h-4 text-amber-500" strokeWidth={1.75} />
+            <span>Terminal Login</span>
           </Link>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto w-full pt-8 sm:pt-12">
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto w-full pt-8 sm:pt-14 relative z-10">
         <div className="text-center space-y-4 mb-12">
-          <div className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700/80 text-xs font-semibold text-slate-300">
-            <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>Phase 1 Verified: RBAC & Master Config</span>
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#181B20]/85 backdrop-blur-md border border-[#262A33] text-xs font-semibold text-slate-200 shadow-lg">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" strokeWidth={1.75} />
+            <span>Hospitality POS & Kitchen Display System</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight">
+          <h1 className="text-4xl sm:text-6xl font-black text-white tracking-tight drop-shadow-md">
             The Grand Bistro
           </h1>
-          <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto">
-            Select a terminal to launch, or sign in to access your designated role portal.
+          <p className="text-base sm:text-lg text-slate-200 max-w-xl mx-auto drop-shadow-sm font-medium">
+            Select an operational terminal to launch, or sign in to access your designated role portal.
           </p>
         </div>
 
@@ -80,32 +83,30 @@ export default function HomePage() {
               <Link
                 key={t.title}
                 href={t.href}
-                className={`group relative flex flex-col justify-between p-6 bg-slate-900/90 border rounded-3xl transition-all duration-200 active:scale-[0.98] shadow-2xl hover:shadow-blue-900/20 ${t.accent}`}
+                className="group relative flex flex-col justify-between p-6 bg-[#181B20]/90 hover:bg-[#181B20] backdrop-blur-md border border-[#262A33] hover:border-amber-500/60 rounded-2xl transition-all duration-200 active:scale-[0.99] shadow-2xl"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div
-                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${t.color} flex items-center justify-center text-white shadow-lg`}
-                    >
-                      <Icon className="w-7 h-7" />
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-12 h-12 rounded-xl bg-[#0F1115]/90 border border-[#262A33] flex items-center justify-center text-amber-400">
+                      <Icon className="w-6 h-6 text-amber-500" strokeWidth={1.75} />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-300 bg-[#0F1115]/90 px-2.5 py-1 rounded-md border border-[#262A33]">
                       {t.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-black text-white group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-bold text-slate-100 group-hover:text-amber-400 transition-colors">
                     {t.title}
                   </h3>
-                  <p className="text-xs font-bold text-slate-400 mt-0.5">{t.subtitle}</p>
-                  <p className="text-sm text-slate-400 mt-3 leading-relaxed">
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">{t.subtitle}</p>
+                  <p className="text-xs text-slate-300 mt-3 leading-relaxed">
                     {t.description}
                   </p>
                 </div>
 
-                <div className="flex items-center text-sm font-bold text-slate-200 mt-6 pt-4 border-t border-slate-800 group-hover:text-white">
+                <div className="flex items-center text-xs font-bold text-slate-300 mt-6 pt-4 border-t border-[#262A33] group-hover:text-amber-400 transition-colors">
                   <span>Launch Terminal</span>
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.75} />
                 </div>
               </Link>
             );
@@ -113,8 +114,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      <footer className="text-center text-xs text-slate-600 py-6 border-t border-slate-900 mt-12">
-        Hotel & Restaurant Management System • Real-Time Socket.io • SQLite/PostgreSQL Prisma Engine
+      <footer className="text-center text-xs text-slate-300 py-6 border-t border-white/15 mt-12 relative z-10 drop-shadow">
+        The Grand Bistro Hospitality System • High-Performance POS & KDS Engine
       </footer>
     </main>
   );

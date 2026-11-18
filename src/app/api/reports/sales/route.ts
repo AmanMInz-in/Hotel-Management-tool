@@ -1,10 +1,44 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export async function GET() {
+export const dynamic = "force-dynamic";
+
+function getStartDateForPeriod(period: string): Date | null {
+  const now = new Date();
+  if (period === "day") {
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+  if (period === "week") {
+    const start = new Date(now);
+    start.setDate(now.getDate() - 7);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+  if (period === "month") {
+    const start = new Date(now);
+    start.setDate(now.getDate() - 30);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }
+  return null;
+}
+
+export async function GET(req: NextRequest) {
   try {
+    const period = req.nextUrl.searchParams.get("period") || "day";
+    const startDate = getStartDateForPeriod(period);
+
+    const whereClause: any = {
+      paymentStatus: "PAID",
+    };
+    if (startDate) {
+      whereClause.createdAt = { gte: startDate };
+    }
+
     const bills = await db.bill.findMany({
-      where: { paymentStatus: "PAID" },
+      where: whereClause,
       include: {
         table: true,
         payments: true,
@@ -18,6 +52,7 @@ export async function GET() {
     });
 
     const voidLogs = await db.voidLog.findMany({
+      where: startDate ? { voidedAt: { gte: startDate } } : undefined,
       take: 20,
       orderBy: { voidedAt: "desc" },
       include: {
@@ -67,6 +102,7 @@ export async function GET() {
       .slice(0, 5);
 
     return NextResponse.json({
+      period,
       summary: {
         totalRevenue,
         totalTaxes,
@@ -75,7 +111,7 @@ export async function GET() {
         paymentBreakdown,
       },
       topSellingDishes,
-      recentBills: bills.slice(0, 10).map((b) => ({
+      recentBills: bills.map((b) => ({
         billNumber: b.billNumber,
         tableNumber: b.table?.tableNumber || "Direct",
         grandTotal: b.grandTotal,
