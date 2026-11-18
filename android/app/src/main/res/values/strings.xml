@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Grand Bistro POS</string>
+    <string name="title_activity_main">Grand Bistro POS</string>
+    <string name="package_name">com.grandbistro.pos</string>
+    <string name="custom_url_scheme">com.grandbistro.pos</string>
+</resources>
