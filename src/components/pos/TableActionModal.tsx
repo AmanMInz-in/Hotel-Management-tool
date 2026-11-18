@@ -3,7 +3,7 @@
 import React from "react";
 import { PlusCircle, ArrowRightLeft, GitMerge, Receipt, CheckCircle, ArrowRight } from "lucide-react";
 import { RestaurantTableDTO } from "@/types";
-import { Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/utils";
 
@@ -33,14 +33,13 @@ export const TableActionModal: React.FC<TableActionModalProps> = ({
   if (!table) return null;
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={`Table ${table.tableNumber} Actions`}
+      title={`Table ${table.tableNumber} Operations`}
       description={`Status: ${table.status.replace("_", " ")} • Capacity: ${table.capacity} Persons`}
-      maxWidth="md"
     >
-      <div className="space-y-4">
+      <div className="space-y-3.5">
         {table.activeOrder ? (
           <div className="p-3.5 bg-[#0F1115] border border-[#262A33] rounded-xl flex items-center justify-between text-sm">
             <div>
@@ -148,6 +147,6 @@ export const TableActionModal: React.FC<TableActionModalProps> = ({
           )}
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };

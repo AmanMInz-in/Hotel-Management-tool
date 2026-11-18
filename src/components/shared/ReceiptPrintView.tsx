@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Printer, Check } from "lucide-react";
-import { Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/utils";
 
@@ -36,12 +36,11 @@ export const ReceiptPrintView: React.FC<ReceiptPrintViewProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
       title="Settlement Receipt"
-      description="Print thermal receipt or export digital voucher."
-      maxWidth="sm"
+      description="Thermal slip receipt & customer voucher."
     >
       <div className="space-y-4">
         {/* Thermal Slip Styled Container */}
@@ -112,16 +111,16 @@ export const ReceiptPrintView: React.FC<ReceiptPrintViewProps> = ({
         </div>
 
         <div className="flex items-center space-x-2 pt-2">
-          <Button id="close-receipt-btn" variant="outline" onClick={onClose} className="w-1/2">
+          <Button id="close-receipt-btn" variant="outline" onClick={onClose} className="w-1/2 min-h-[48px]">
             <Check className="w-4 h-4 mr-1.5" strokeWidth={1.75} />
             Done
           </Button>
-          <Button id="print-receipt-btn" variant="primary" onClick={handlePrint} className="w-1/2">
+          <Button id="print-receipt-btn" variant="primary" onClick={handlePrint} className="w-1/2 min-h-[48px] font-bold">
             <Printer className="w-4 h-4 mr-1.5" strokeWidth={1.75} />
             Print Receipt
           </Button>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };

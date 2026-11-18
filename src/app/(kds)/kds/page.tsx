@@ -1,16 +1,19 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { OrderDTO, OrderItemDTO, ItemStatus } from "@/types";
-import { KDSHeader } from "@/components/kds/KDSHeader";
 import { KDSTicketCard } from "@/components/kds/KDSTicketCard";
 import { VoidAuthModal } from "@/components/pos/VoidAuthModal";
-import { ChefHat } from "lucide-react";
+import { MobileAppBar } from "@/components/shared/MobileAppBar";
+import { MobileBottomNav } from "@/components/shared/MobileBottomNav";
+import { ChefHat, Volume2, VolumeX } from "lucide-react";
 import { playAlertSound } from "@/components/shared/AudioAlerts";
 import { useSocket } from "@/hooks/useSocket";
 import { SOCKET_ROOMS, SOCKET_EVENTS } from "@/server/events";
 
 export default function KDSPage() {
+  const router = useRouter();
   const socket = useSocket(SOCKET_ROOMS.KDS);
 
   const [tickets, setTickets] = useState<OrderDTO[]>([]);
@@ -33,7 +36,6 @@ export default function KDSPage() {
     loadTickets();
   }, [loadTickets]);
 
-  // Real-time socket events for KDS
   useEffect(() => {
     if (!socket) return;
 
@@ -84,32 +86,44 @@ export default function KDSPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pin, reason }),
     });
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Void failed");
-    }
+    if (!res.ok) throw new Error((await res.json()).error || "Void failed");
     loadTickets();
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <KDSHeader
-        activeCount={tickets.length}
-        soundEnabled={soundEnabled}
-        onToggleSound={() => setSoundEnabled(!soundEnabled)}
+    <div className="min-h-[100dvh] bg-[#0F1115] flex flex-col pb-20 select-none">
+      <MobileAppBar
+        title="Kitchen Queue"
+        subtitle={`${tickets.length} Active Tickets`}
+        roleBadge="KDS"
+        showBack={true}
+        onBack={() => router.push("/")}
+        rightAction={
+          <button
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="w-9 h-9 rounded-full bg-[#0F1115] border border-[#262A33] flex items-center justify-center text-slate-300 hover:text-amber-400 active:scale-95 transition-all"
+            title={soundEnabled ? "Mute Kitchen Chime" : "Enable Kitchen Chime"}
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-4 h-4 text-amber-500" strokeWidth={1.75} />
+            ) : (
+              <VolumeX className="w-4 h-4 text-slate-500" strokeWidth={1.75} />
+            )}
+          </button>
+        }
       />
 
-      <main className="flex-1 p-6 overflow-x-auto">
+      <main className="flex-1 p-3 sm:p-5 max-w-5xl mx-auto w-full">
         {tickets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-96 text-slate-500 space-y-3">
-            <div className="w-16 h-16 rounded-full bg-[#181B20] border border-[#262A33] flex items-center justify-center text-slate-400">
-              <ChefHat className="w-8 h-8 text-amber-500/80" strokeWidth={1.75} />
+          <div className="flex flex-col items-center justify-center h-80 text-slate-500 space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-[#181B20] border border-[#262A33] flex items-center justify-center text-slate-400">
+              <ChefHat className="w-8 h-8 text-amber-500" strokeWidth={1.75} />
             </div>
-            <p className="text-lg font-semibold text-slate-200">No active orders in queue</p>
-            <p className="text-xs text-slate-500">All kitchen tickets have been fulfilled and bumped.</p>
+            <p className="text-base font-bold text-slate-200">No active tickets in queue</p>
+            <p className="text-xs text-slate-500">Orders placed by servers appear here in real time.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {tickets.map((ticket) => (
               <KDSTicketCard
                 key={ticket.id}
@@ -123,7 +137,7 @@ export default function KDSPage() {
         )}
       </main>
 
-      {voidTarget ? (
+      {voidTarget && (
         <VoidAuthModal
           isOpen={Boolean(voidTarget)}
           onClose={() => setVoidTarget(null)}
@@ -131,7 +145,9 @@ export default function KDSPage() {
           itemName={voidTarget.menuItemName || "Item"}
           onConfirmVoid={handleConfirmVoid}
         />
-      ) : null}
+      )}
+
+      <MobileBottomNav role="KITCHEN" />
     </div>
   );
 }

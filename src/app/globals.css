@@ -19,6 +19,23 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Hide scrollbar for category pills and mobile carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area padding utilities for modern Android/iOS gesture bars */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+.bottom-nav-height {
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
 /* POS Terminal custom scrollbars */
 ::-webkit-scrollbar {
   width: 5px;

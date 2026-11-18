@@ -52,7 +52,7 @@ export const TableGrid: React.FC<TableGridProps> = ({
       </div>
 
       {/* Section Filter Tabs */}
-      <div className="flex items-center space-x-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center space-x-2 overflow-x-auto pb-1 no-scrollbar">
         <button
           onClick={() => setSelectedSectionId("ALL")}
           className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors min-h-[44px] ${

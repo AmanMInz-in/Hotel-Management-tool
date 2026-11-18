@@ -59,10 +59,11 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item, onAdd }) => {
 
         {item.isAvailable ? (
           <button
+            id={`add-item-btn-${item.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
             type="button"
-            className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#22262E] hover:bg-amber-500 hover:text-slate-950 text-slate-300 border border-[#313642] transition-colors"
+            className="flex items-center justify-center w-9 h-9 min-h-[36px] min-w-[36px] rounded-xl bg-[#22262E] hover:bg-amber-500 hover:text-slate-950 text-amber-400 active:scale-90 border border-[#313642] transition-all"
           >
-            <Plus className="w-4 h-4" strokeWidth={1.75} />
+            <Plus className="w-4 h-4" strokeWidth={2} />
           </button>
         ) : null}
       </div>

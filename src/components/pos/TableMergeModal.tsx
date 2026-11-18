@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { GitMerge } from "lucide-react";
 import { RestaurantTableDTO } from "@/types";
-import { Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 
 interface TableMergeModalProps {
@@ -40,12 +40,11 @@ export const TableMergeModal: React.FC<TableMergeModalProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
       title={`Merge into Table ${primaryTable.tableNumber}`}
-      description="Combine another occupied table's order into this table."
-      maxWidth="md"
+      description="Select an occupied table to combine orders."
     >
       <div className="space-y-4">
         <div>
@@ -62,9 +61,9 @@ export const TableMergeModal: React.FC<TableMergeModalProps> = ({
                 <button
                   key={table.id}
                   onClick={() => setSecondaryTableId(table.id)}
-                  className={`p-3 rounded-xl text-center border font-bold transition-all min-h-[48px] ${
+                  className={`p-3 rounded-xl text-center border font-bold transition-all min-h-[48px] active:scale-95 ${
                     secondaryTableId === table.id
-                      ? "bg-amber-500 border-amber-400 text-slate-950"
+                      ? "bg-amber-500 border-amber-400 text-[#0F1115] font-black"
                       : "bg-[#0F1115] border-[#262A33] text-slate-300 hover:border-slate-600"
                   }`}
                 >
@@ -75,8 +74,8 @@ export const TableMergeModal: React.FC<TableMergeModalProps> = ({
           )}
         </div>
 
-        <div className="flex items-center justify-end space-x-2 pt-4 border-t border-[#262A33]">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+        <div className="flex items-center space-x-2 pt-3 border-t border-[#262A33]">
+          <Button variant="outline" onClick={onClose} disabled={loading} className="w-1/3 min-h-[48px]">
             Cancel
           </Button>
           <Button
@@ -84,12 +83,13 @@ export const TableMergeModal: React.FC<TableMergeModalProps> = ({
             onClick={handleMerge}
             disabled={!secondaryTableId || loading}
             isLoading={loading}
+            className="w-2/3 min-h-[48px] font-bold"
           >
             <GitMerge className="w-4 h-4 mr-2" strokeWidth={1.75} />
             Confirm Merge
           </Button>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };

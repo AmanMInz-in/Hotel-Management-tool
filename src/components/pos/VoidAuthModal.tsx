@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { ShieldAlert, Delete } from "lucide-react";
-import { Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 
 interface VoidAuthModalProps {
@@ -60,12 +60,11 @@ export const VoidAuthModal: React.FC<VoidAuthModalProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
       title="Manager PIN Authorization"
-      description={`Voiding "${itemName}" in kitchen.`}
-      maxWidth="sm"
+      description={`Voiding "${itemName}" in kitchen queue.`}
     >
       <div className="space-y-4">
         {/* PIN Dots Display */}
@@ -155,13 +154,13 @@ export const VoidAuthModal: React.FC<VoidAuthModalProps> = ({
             onClick={handleVoid}
             disabled={loading || pin.length < 4}
             isLoading={loading}
-            className="w-full font-bold"
+            className="w-full min-h-[50px] font-bold"
           >
             <ShieldAlert className="w-4 h-4 mr-2" strokeWidth={1.75} />
             Authorize Void Item
           </Button>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };

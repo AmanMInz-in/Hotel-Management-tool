@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
-import { Modal } from "@/components/ui/Modal";
+import { CheckCircle2, QrCode } from "lucide-react";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/utils";
 import { computeBillTotals } from "@/lib/calculations";
@@ -68,12 +68,11 @@ export const BillPreviewModal: React.FC<BillPreviewModalProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
-      title={`Billing & Checkout: Table ${tableNumber}`}
-      description="Review 5% GST taxes, apply discounts, split shares, and record payment."
-      maxWidth="lg"
+      title={`Billing: Table ${tableNumber}`}
+      description="Review 5% GST, apply discounts, split shares, and tender payment."
     >
       <div className="space-y-4">
         <BillBreakdownSummary
@@ -127,20 +126,20 @@ export const BillPreviewModal: React.FC<BillPreviewModalProps> = ({
           grandTotal={billTotals.grandTotal}
         />
 
-        <div className="pt-2">
+        <div className="pt-2 sticky bottom-0 bg-[#181B20] pb-1">
           <Button
             id="settle-and-reset-btn"
             variant="primary"
             onClick={handleSettle}
             disabled={loading}
             isLoading={loading}
-            className="w-full text-base font-bold"
+            className="w-full min-h-[52px] text-base font-bold shadow-lg"
           >
             <CheckCircle2 className="w-5 h-5 mr-2" strokeWidth={1.75} />
             Settle {formatCurrency(billTotals.grandTotal)} & Reset Table
           </Button>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };

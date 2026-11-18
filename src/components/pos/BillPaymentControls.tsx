@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Banknote, QrCode, CreditCard } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { PaymentMode } from "@/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -22,6 +23,8 @@ export const BillPaymentControls: React.FC<BillPaymentControlsProps> = ({
 }) => {
   const tenderedNum = parseFloat(cashTendered) || 0;
   const changeDue = Math.max(0, tenderedNum - grandTotal);
+
+  const upiPayload = `upi://pay?pa=grandbistro@okicici&pn=The+Grand+Bistro&am=${grandTotal.toFixed(2)}&cu=INR&tn=Table+Bill`;
 
   return (
     <div className="space-y-3">
@@ -52,6 +55,26 @@ export const BillPaymentControls: React.FC<BillPaymentControlsProps> = ({
           ))}
         </div>
       </div>
+
+      {/* Dynamic High-Contrast UPI QR Card for Dim Restaurant Lighting */}
+      {paymentMode === "UPI" && (
+        <div className="flex flex-col items-center justify-center p-4 bg-white rounded-2xl border-2 border-slate-300 shadow-xl space-y-2 text-slate-900 animate-in fade-in zoom-in-95 duration-150">
+          <QRCodeSVG
+            value={upiPayload}
+            size={160}
+            level="H"
+            includeMargin={true}
+          />
+          <div className="text-center">
+            <span className="text-[11px] font-bold text-slate-700 block">
+              Scan with Google Pay • PhonePe • Paytm • Any UPI
+            </span>
+            <span className="text-xl font-black font-mono tabular-nums text-slate-950 block mt-0.5">
+              {formatCurrency(grandTotal)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {paymentMode === "CASH" ? (
         <div className="grid grid-cols-2 gap-3 bg-[#0F1115] p-3.5 rounded-xl border border-[#262A33]">

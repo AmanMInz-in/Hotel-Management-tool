@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { ArrowRightLeft } from "lucide-react";
 import { RestaurantTableDTO } from "@/types";
-import { Modal } from "@/components/ui/Modal";
+import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 
 interface TableTransferModalProps {
@@ -38,12 +38,11 @@ export const TableTransferModal: React.FC<TableTransferModalProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheet
       isOpen={isOpen}
       onClose={onClose}
       title={`Transfer Table ${sourceTable.tableNumber}`}
-      description="Select an available table to transfer the active session."
-      maxWidth="md"
+      description="Select an available destination table for this active order."
     >
       <div className="space-y-4">
         <div>
@@ -73,8 +72,8 @@ export const TableTransferModal: React.FC<TableTransferModalProps> = ({
           )}
         </div>
 
-        <div className="flex items-center justify-end space-x-2 pt-4 border-t border-[#262A33]">
-          <Button variant="outline" onClick={onClose} disabled={loading}>
+        <div className="flex items-center space-x-2 pt-3 border-t border-[#262A33]">
+          <Button variant="outline" onClick={onClose} disabled={loading} className="w-1/3 min-h-[48px]">
             Cancel
           </Button>
           <Button
@@ -82,12 +81,13 @@ export const TableTransferModal: React.FC<TableTransferModalProps> = ({
             onClick={handleTransfer}
             disabled={!targetTableId || loading}
             isLoading={loading}
+            className="w-2/3 min-h-[48px] font-bold"
           >
             <ArrowRightLeft className="w-4 h-4 mr-2" strokeWidth={1.75} />
             Confirm Transfer
           </Button>
         </div>
       </div>
-    </Modal>
+    </BottomSheet>
   );
 };
